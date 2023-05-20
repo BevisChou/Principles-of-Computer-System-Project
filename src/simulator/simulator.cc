@@ -17,11 +17,80 @@ void Simulator::load_assembly(vector<string> assembly) {
 }
     
 void Simulator::step() {
-    Word instruction = instruction_memory_[addr_to_index(PC_)];
+    uint32_t instruction, opcode, rs, rt, rd, shamt, funct, address;
+    int32_t immediate;
 
-    // TODO: decode instruction and update machine states
-
+    instruction = instruction_memory_[addr_to_index(PC_)].to_ulong();
     PC_ = PC_.to_ulong() + 4;
+
+    opcode = instruction >> 26;
+    InstructionType type = OPCODE_TO_TYPE.at(opcode);
+
+    rs = (instruction >> 21) & 0b11111;
+    rt = (instruction >> 16) & 0b11111;
+
+    switch (type) {
+        case InstructionType::R:
+            rd = (instruction >> 11) & 0b11111;
+            shamt = (instruction >> 6) & 0b11111;
+            funct = instruction & 0b111111;
+
+            if (funct == 0b001000) {  // jr
+                PC_ = registers_[rs];
+            } else if (funct == 0b000000) {  // sll
+                registers_[rd] = registers_[rt] << shamt;
+            } else {
+                switch (funct) {
+                    case 0b100000:  // add
+                        registers_[rd] = static_cast<int32_t>(registers_[rs].to_ulong()) + static_cast<int32_t>(registers_[rt].to_ulong());
+                        break;
+                    case 0b100010:  // sub
+                        registers_[rd] = static_cast<int32_t>(registers_[rs].to_ulong()) - static_cast<int32_t>(registers_[rt].to_ulong());
+                        break;
+                    case 0b100100:  // and
+                        registers_[rd] = registers_[rs] & registers_[rt];
+                        break;
+                    case 0b100101:  // or
+                        registers_[rd] = registers_[rs] | registers_[rt];
+                        break;
+                    case 0b101010:  // slt
+                        registers_[rd] = static_cast<int32_t>(registers_[rs].to_ulong()) < static_cast<int32_t>(registers_[rt].to_ulong());
+                        break;
+                }
+            }
+            break;
+        case InstructionType::I:
+            immediate = instruction & 0xffff;
+            switch (opcode) {
+                case 0b001000:  // addi
+                    registers_[rt] = static_cast<int32_t>(registers_[rs].to_ulong()) + immediate;
+                    break;
+                case 0b100011:  // lw
+                    registers_[rt] = data_memory_[addr_to_index(static_cast<int32_t>(registers_[rs].to_ulong()) + immediate)];
+                    break;
+                case 0b101011:  // sw
+                    data_memory_[addr_to_index(static_cast<int32_t>(registers_[rs].to_ulong()) + immediate)] = registers_[rt];
+                    break;
+                case 0b000100: // beq
+                    if (registers_[rs] == registers_[rt]) {
+                        PC_ = static_cast<int32_t>(PC_.to_ulong()) + immediate;
+                    }
+                    break;
+                case 0b000101: // bne
+                    if (registers_[rs] != registers_[rt]) {
+                        PC_ = static_cast<int32_t>(PC_.to_ulong()) + immediate;
+                    }
+                    break;
+            }
+            break;
+        case InstructionType::J:
+            address = instruction & 0x3ffffff;
+            if (opcode == 0b000011) {  // jal
+                registers_[static_cast<uint32_t>(Register::RA)] = PC_;
+            }
+            PC_ = address;
+            break;
+    }
 }
 
 const vector<Word>& Simulator::registers() {
@@ -53,3 +122,10 @@ uint32_t Simulator::addr_to_index(Word address) {
         throw runtime_error("Invalid address");
     }
 }
+
+const unordered_map<uint32_t, InstructionType> Simulator::OPCODE_TO_TYPE = {
+    {0b000000,  InstructionType::R},    {0b000010,  InstructionType::J},    
+    {0b000011,  InstructionType::J},    {0b001000,  InstructionType::I},
+    {0b100011,  InstructionType::I},    {0b101011,  InstructionType::I},  
+    {0b000100,  InstructionType::I},    {0b000101,  InstructionType::I}
+};

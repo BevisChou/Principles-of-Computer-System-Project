@@ -19,6 +19,7 @@ public:
 private:
     void init(const vector<Word>&);
     uint32_t addr_to_index(Word);
+    static const unordered_map<uint32_t, InstructionType> OPCODE_TO_TYPE;
     static const uint32_t MAX_TEXT_SEGMENT_SIZE = 0x100000;
     static const uint32_t MAX_STACK_SIZE = 0x100000;
     vector<string> assembly_;
