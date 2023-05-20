@@ -6,6 +6,8 @@ vector<Word> Assembler::assemble(const vector<string>& input) {
 
     vector<Word> res;
     unordered_map<string, uint32_t> labels;
+
+    vector<vector<string>> toks;
     for (uint32_t i = 0; i < lines.size(); i++) {
         vector<string> tokens = split(lines[i], set<char>{' ', ',', '(', ')'});
 
@@ -18,6 +20,12 @@ vector<Word> Assembler::assemble(const vector<string>& input) {
             labels[label] = i;
             tokens.erase(tokens.begin());
         }
+
+        toks.emplace_back(tokens);
+    }
+
+    for (uint32_t i = 0; i < toks.size(); i++) {
+        vector<string>& tokens = toks[i];
 
         // mv pseudo instruction
         if (tokens[0] == "mv") {
@@ -33,15 +41,15 @@ vector<Word> Assembler::assemble(const vector<string>& input) {
             case InstructionType::R:
                 opcode = 0b000000;
                 if (tokens[0] == "jr") {
-                    rs = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[1]));
+                    rs = static_cast<uint32_t>(parse_register(tokens[1]));
                 } else if (tokens[0] == "sll") {
-                    rt = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[2]));
-                    rd = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[1]));
+                    rt = static_cast<uint32_t>(parse_register(tokens[2]));
+                    rd = static_cast<uint32_t>(parse_register(tokens[1]));
                     shamt = stoi(tokens[3]);
                 } else {
-                    rs = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[2]));
-                    rt = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[3]));
-                    rd = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[1]));
+                    rs = static_cast<uint32_t>(parse_register(tokens[2]));
+                    rt = static_cast<uint32_t>(parse_register(tokens[3]));
+                    rd = static_cast<uint32_t>(parse_register(tokens[1]));
                 }
                 funct = Assembler::INSTRUCTION_TO_FUNCT.at(tokens[0]);
                 word = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
@@ -49,25 +57,25 @@ vector<Word> Assembler::assemble(const vector<string>& input) {
             case InstructionType::I:
                 opcode = Assembler::INSTRUCTION_TO_OPCODE.at(tokens[0]);
                 if (tokens[0] == "addi") {
-                    rs = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[2]));
-                    rt = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[1]));
+                    rs = static_cast<uint32_t>(parse_register(tokens[2]));
+                    rt = static_cast<uint32_t>(parse_register(tokens[1]));
                     immediate = stoi(tokens[3]);
                 } else if (tokens[0] == "lw" || tokens[0] == "sw") {
-                    rs = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[3]));
-                    rt = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[1]));
+                    rs = static_cast<uint32_t>(parse_register(tokens[3]));
+                    rt = static_cast<uint32_t>(parse_register(tokens[1]));
                     immediate = stoi(tokens[2]);
                 } else {
-                    rs = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[1]));
-                    rt = static_cast<uint32_t>(Assembler::REGISTER_TO_NUMBER.at(tokens[2]));
+                    rs = static_cast<uint32_t>(parse_register(tokens[1]));
+                    rt = static_cast<uint32_t>(parse_register(tokens[2]));
                     auto it = labels.find(tokens[3]);
                     immediate = it == labels.end() ? stoi(tokens[3]) : (it->second - i - 1);
                 }
-                word = (opcode << 26) | (rs << 21) | (rt << 16) | immediate;
+                word = (opcode << 26) | (rs << 21) | (rt << 16) | (immediate & 0xffff);
                 break;
             case InstructionType::J:
                 opcode = Assembler::INSTRUCTION_TO_OPCODE.at(tokens[0]);
                 address = Assembler::index_to_addr(labels.at(tokens[1])) >> 2;
-                word = (opcode << 26) | address;
+                word = (opcode << 26) | (address & 0x3ffffff);
                 break;
         }
         res.emplace_back(word);
@@ -93,10 +101,13 @@ vector<string> Assembler::preprocess(const vector<string>& input) {
 
     for (const string& line : input) {
         for (char c : line) {
+            is_pound = false;
             switch (c) {
                 case '#':
                     is_pound = true;
                     break;
+                case '\r':
+                case '\n':
                 case '\t':
                 case ' ':
                     last_is_space = true;
