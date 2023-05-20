@@ -15,7 +15,7 @@ public:
     static vector<string> disassemble(const vector<Word>&);
     static vector<string> disassemble(const string&);
 private:
-    static const unordered_map<string, uint32_t> FUNCT_TO_INSTRUCTION;
-    static const unordered_map<string, uint32_t> OPCODE_TO_INSTRUCTION;
-    static const unordered_map<string, uint32_t> NUMBER_TO_REGISTER;
+    static const unordered_map<uint32_t, string> FUNCT_TO_INSTRUCTION;
+    static const unordered_map<uint32_t, string> OPCODE_TO_INSTRUCTION;
+    static const unordered_map<Register, string> REGISTER_TO_STRING;
 };
