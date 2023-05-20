@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -15,4 +16,6 @@ void write_uints(const vector<Word>&, const string&);
 
 Word string_to_word(const string&);
 
-vector<string> split(const string&, char);
+vector<string> split(const string&, set<char>&&);
+
+void to_lower(string&);

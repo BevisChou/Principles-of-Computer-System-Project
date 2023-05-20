@@ -63,7 +63,7 @@ void Interface::serve() {
 }
 
 vector<string> Interface::tokenize(const string& input) {
-    vector<string> tokens = split(input, ' ');
+    vector<string> tokens = split(input, set<char>{' '});
     
     // TODO: verify tokens
 

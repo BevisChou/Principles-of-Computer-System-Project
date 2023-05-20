@@ -24,3 +24,9 @@ enum class Register : uint32_t {
     T8 = 24,    T9 = 25,    K0 = 26,    K1 = 27,
     GP = 28,    SP = 29,    FP = 30,    RA = 31
 };
+
+enum class InstructionType {
+    R,
+    I,
+    J
+};

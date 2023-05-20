@@ -3,22 +3,22 @@
 #include "disassembler.hh"
 /// <summary>
 /// for i from 0 to instructions.size()
-///     string ins//ÓÃÓÚ´¢´æ×ª»»³ÉµÄ»ã±àÓïÑÔ
+///     string ins//ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ÉµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///     opcode = (instruction & 0b11111100000000000000000000000000)>>26;
-///     if opcodeµÈÓÚ0b000000
-///         //¸ÃÖ¸ÁîÎªRÐÍÖ¸Áî£¬ÐèÍ¨¹ýfuncÂë½øÐÐÇø·Ö
+///     if opcodeï¿½ï¿½ï¿½ï¿½0b000000
+///         //ï¿½ï¿½Ö¸ï¿½ï¿½ÎªRï¿½ï¿½Ö¸ï¿½î£¬ï¿½ï¿½Í¨ï¿½ï¿½funcï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///         func = (instruction & 0b111111)
 ///         rs = (instruction & 0b00000011111000000000000000000000)>>21
 ///         rt = (instruction & 0b00000000000111110000000000000000)>>16
 ///         rd = (instruction & 0b00000000000000001111100000000000)>>11
 ///         shamt = (instruction & 0b11111000000)
-///         //¸ù¾Ý²»Í¬µÄfuncÂëÕÒµ½¶ÔÓ¦µÄÖ¸Áî£¬°´Ö¸ÁîµÄ¹æ·¶µÃµ½»ã±àÓïÑÔ
+///         //ï¿½ï¿½Ý²ï¿½Í¬ï¿½ï¿½funcï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ö¸ï¿½î£¬ï¿½ï¿½Ö¸ï¿½ï¿½Ä¹æ·¶ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///         ins = FUNCT_TO_INSTRUCTION.at(func) + rs / rt /rd /shamt
-///     else opcode²»µÈÓÚ0b000000
-///         //¸ÃÖ¸ÁîÎªIÐÍÖ¸Áî»òJÐÍÖ¸Áî£¬ÐèÍ¨¹ýopÂë½øÐÐÇø·Ö
-///         for IÐÍÖ¸Áî get rs,rt and imm
+///     else opcodeï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0b000000
+///         //ï¿½ï¿½Ö¸ï¿½ï¿½ÎªIï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Jï¿½ï¿½Ö¸ï¿½î£¬ï¿½ï¿½Í¨ï¿½ï¿½opï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+///         for Iï¿½ï¿½Ö¸ï¿½ï¿½ get rs,rt and imm
 ///         ins = OPCODE_TO_INSTRUCTION.at(opcode) + rs + rt + imm
-///         for JÐÍÖ¸Áî get address
+///         for Jï¿½ï¿½Ö¸ï¿½ï¿½ get address
 ///         ins = OPCODE_TO_INSTRUCTION.at(opcode) + address/label
 /// return set of ins
 /// </summary>

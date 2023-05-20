@@ -34,17 +34,27 @@ void write_uints(const vector<Word>& words, const string& filename) {
     }
 }
 
-vector<string> split(const string& input, char delim) {
-    vector<string> tokens;
-    string token;
+vector<string> split(const string& input, set<char>&& delims) {
+    vector<string> res;
+    string cur;
     for (char c : input) {
-        if (c == delim) {
-            tokens.push_back(token);
-            token.clear();
+        if (delims.count(c)) {
+            if (!cur.empty()) {
+                res.push_back(cur);
+                cur.clear();
+            }
         } else {
-            token += c;
+            cur += c;
         }
     }
-    tokens.push_back(token);
-    return tokens;
+    if (!cur.empty()) {
+        res.push_back(cur);
+    }
+    return res;
+}
+
+void to_lower(string& str) {
+    for (char& c : str) {
+        c = tolower(c);
+    }
 }
