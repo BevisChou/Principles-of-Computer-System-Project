@@ -1,11 +1,8 @@
 #!/bin/bash
 
 # build
-rm -rf build
-mkdir build
-cd build
-cmake ../src
-make
+# ./build.sh
 
 # run
+cd build
 ./mips_machine
