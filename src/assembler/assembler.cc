@@ -36,7 +36,7 @@ vector<Word> Assembler::assemble(const vector<string>& input) {
         // translate instructions
         Word word;
         uint32_t opcode, rs = 0, rt = 0, rd = 0, shamt = 0, funct, address;
-        int32_t immediate;
+        int16_t immediate;
         switch (Assembler::INSTRUCTION_TO_TYPE.at(tokens[0])) {
             case InstructionType::R:
                 opcode = 0b000000;

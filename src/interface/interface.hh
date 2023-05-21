@@ -6,6 +6,7 @@
 #include "simulator.hh"
 #include "util.hh"
 
+#include <cstdio>
 #include <iostream>
 #include <string>
 #include <vector>

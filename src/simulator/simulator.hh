@@ -13,9 +13,11 @@ public:
     Simulator();
     void load_binary(vector<Word>);
     void load_assembly(vector<string>);
-    void step();
+    string step();
+    void set(uint8_t, int32_t);
     const vector<Word>& registers();
     const vector<Word>& data_memory();
+    static const vector<string> NUMBER_TO_REGISTER;
 private:
     void init(const vector<Word>&);
     uint32_t addr_to_index(Word);
