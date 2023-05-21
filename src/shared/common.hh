@@ -11,7 +11,7 @@ const uint32_t NUM_BITS_PER_BYTE = 8;
 using Word = bitset<WORD_SIZE * NUM_BITS_PER_BYTE>;
 
 const uint32_t TEXT_SEGMENT_BASE = 0x400000;
-const uint32_t STACK_TOP = 0x80000000;
+const uint32_t STACK_TOP = 0x7fffffffc;
 
 const uint32_t NUM_REGISTERS = 32;
 enum class Register : uint32_t {

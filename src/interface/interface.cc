@@ -6,6 +6,9 @@ void Interface::serve() {
     do {
         getline(cin, input);
         vector<string> tokens = tokenize(input);
+        if (tokens.size() == 0) {
+            continue;
+        }
         switch (state_) {
             case State::DEFAULT:
                 if (tokens[0] == "assemble") {
@@ -43,14 +46,25 @@ void Interface::serve() {
                 break;
             case State::SIMULATING:
                 if (tokens[0] == "step") {
-                    simulator_.step();
+                    string line = simulator_.step();
+                    cout << line << endl;
+                } else if (tokens[0] == "set") {
+                    simulator_.set(stoi(tokens[1]), stoi(tokens[2]));
                 } else if (tokens[0] == "show") {
                     if (tokens[1] == "registers") {
                         const vector<Word>& registers = simulator_.registers();
-                        // TODO: print registers
+                        int num_regs_per_line = 4, num_rows = NUM_REGISTERS / num_regs_per_line;
+                        for (int i = 0; i < num_rows; i++) {
+                            for (int j = 0; j < num_regs_per_line; j++) {
+                                printf("%s:\t%010x\t", Simulator::NUMBER_TO_REGISTER[i * num_regs_per_line + j].c_str(), registers[i * num_regs_per_line + j].to_ulong());
+                            }
+                            printf("\n");
+                        }
                     } else if (tokens[1] == "memory") {
                         const vector<Word>& memory = simulator_.data_memory();
-                        // TODO: print memory
+                        for (int i = 0; i < memory.size() && memory[i] != 0; i++) {
+                            printf("%#010x: %#010x\n", STACK_TOP - i * WORD_SIZE, memory[i].to_ulong());
+                        }
                     }
                 } else {
                     state_ = State::DEFAULT;
@@ -64,8 +78,5 @@ void Interface::serve() {
 
 vector<string> Interface::tokenize(const string& input) {
     vector<string> tokens = split(input, set<char>{' '});
-    
-    // TODO: verify tokens
-
     return tokens;
 }

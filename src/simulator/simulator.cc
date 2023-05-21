@@ -11,16 +11,20 @@ void Simulator::load_binary(vector<Word> binary) {
 }
     
 void Simulator::load_assembly(vector<string> assembly) {
-    assembly_ = assembly;
     vector<Word> binary = Assembler::assemble(assembly);
-    init(binary);
+    load_binary(binary);
 }
     
-void Simulator::step() {
+string Simulator::step() {
     uint32_t instruction, opcode, rs, rt, rd, shamt, funct, address;
-    int32_t immediate;
+    int16_t immediate;
 
+    string res;
     instruction = instruction_memory_[addr_to_index(PC_)].to_ulong();
+    if (instruction == 0) {
+        return res;
+    }
+    res = assembly_[addr_to_index(PC_)];
     PC_ = PC_.to_ulong() + 4;
 
     opcode = instruction >> 26;
@@ -60,7 +64,7 @@ void Simulator::step() {
             }
             break;
         case InstructionType::I:
-            immediate = instruction & 0xffff;
+            immediate = static_cast<int16_t>(instruction & 0xffff);
             switch (opcode) {
                 case 0b001000:  // addi
                     registers_[rt] = static_cast<int32_t>(registers_[rs].to_ulong()) + immediate;
@@ -73,12 +77,12 @@ void Simulator::step() {
                     break;
                 case 0b000100: // beq
                     if (registers_[rs] == registers_[rt]) {
-                        PC_ = static_cast<int32_t>(PC_.to_ulong()) + immediate;
+                        PC_ = static_cast<int32_t>(PC_.to_ulong()) + immediate * 4;
                     }
                     break;
                 case 0b000101: // bne
                     if (registers_[rs] != registers_[rt]) {
-                        PC_ = static_cast<int32_t>(PC_.to_ulong()) + immediate;
+                        PC_ = static_cast<int32_t>(PC_.to_ulong()) + immediate * 4;
                     }
                     break;
             }
@@ -91,6 +95,11 @@ void Simulator::step() {
             PC_ = address;
             break;
     }
+    return res;
+}
+
+void Simulator::set(uint8_t reg_num, int32_t num) {
+    registers_[reg_num] = num;
 }
 
 const vector<Word>& Simulator::registers() {
@@ -101,6 +110,13 @@ const vector<Word>& Simulator::data_memory() {
     return data_memory_;
 }
 
+const vector<string> Simulator::NUMBER_TO_REGISTER = {
+    "zero", "at",   "v0",   "v1",   "a0",   "a1",   "a2",   "a3",
+    "t0",   "t1",   "t2",   "t3",   "t4",   "t5",   "t6",   "t7",
+    "s0",   "s1",   "s2",   "s3",   "s4",   "s5",   "s6",   "s7",
+    "t8",   "t9",   "k0",   "k1",   "gp",   "sp",   "fp",   "ra"
+};
+
 void Simulator::init(const vector<Word>& binary) {
     fill(registers_.begin(), registers_.end(), 0);
     fill(instruction_memory_.begin(), instruction_memory_.end(), 0);
@@ -110,6 +126,7 @@ void Simulator::init(const vector<Word>& binary) {
 
     registers_[static_cast<uint32_t>(Register::SP)] = STACK_TOP;
     PC_ = TEXT_SEGMENT_BASE;
+    registers_[static_cast<uint32_t>(Register::RA)] = TEXT_SEGMENT_BASE + binary.size() * WORD_SIZE;
 }
 
 uint32_t Simulator::addr_to_index(Word address) {

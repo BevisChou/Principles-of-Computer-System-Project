@@ -23,14 +23,15 @@
 3. simulate assembly `file_name`
 4. simulate binary `file_name`
 5. step
-6. show registers
-7. show memory
-8. terminate
-9. convert to int `bits`
-10. convert to float `bits`
-11. convert int `number`
-12. convert float `number`
-13. exit
+6. set `register_number` `number`
+7. show registers
+8. show memory
+9. terminate
+10. convert to int `bits`
+11. convert to float `bits`
+12. convert int `number`
+13. convert float `number`
+14. exit
 
 支持的指令包括：
 - mv
