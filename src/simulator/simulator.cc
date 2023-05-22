@@ -101,6 +101,10 @@ const vector<Word>& Simulator::registers() {
     return registers_;
 }
 
+const Word& Simulator::PC() {
+    return PC_;
+}
+
 const vector<Word>& Simulator::data_memory() {
     return data_memory_;
 }
