@@ -325,7 +325,7 @@ Word float_to_bits(string x) {
 
 string bits_to_int(Word x) {
     //allocate space for the integer string
-    string res = (char*)malloc(12);
+    string res(12, 0);
     for(int i = 0; i < 12; ++i)
         res[i] = 0;
     std::stack<char> char_stack;
@@ -363,7 +363,7 @@ string bits_to_int(Word x) {
 
 string bits_to_float(Word x) {
     //allocate space for the float string
-    string res = (char*)malloc(50);
+    string res(50, 0);
     for(int i = 0; i < 50; ++i)
 	        res[i] = 0;
     int res_pool[50] = {0};
