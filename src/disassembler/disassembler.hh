@@ -12,6 +12,7 @@ using namespace std;
 class Disassembler {
 public:
     Disassembler() = delete;
+    ~Disassembler() = delete;
     static vector<string> disassemble(const vector<Word>&);
     static vector<string> disassemble(const string&);
 private:

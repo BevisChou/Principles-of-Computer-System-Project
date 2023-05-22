@@ -1,8 +1,11 @@
 #include "assembler.hh"
 
-vector<Word> Assembler::assemble(const vector<string>& input) {
+vector<Word> Assembler::assemble(const vector<string>& input, bool preprocessed) {
     // assumption: no consecutive labels and at most one instruction per line
-    vector<string> lines = preprocess(input);
+    vector<string> lines(input);
+    if (!preprocessed) {
+        lines = preprocess(lines);
+    }
 
     vector<Word> res;
     unordered_map<string, uint32_t> labels;

@@ -11,20 +11,19 @@ void Simulator::load_binary(vector<Word> binary) {
 }
     
 void Simulator::load_assembly(vector<string> assembly) {
-    vector<Word> binary = Assembler::assemble(assembly);
-    load_binary(binary);
+    assembly_ = Assembler::preprocess(assembly);
+    init(Assembler::assemble(assembly_, true));
 }
     
-string Simulator::step() {
+int32_t Simulator::step() {
     uint32_t instruction, opcode, rs, rt, rd, shamt, funct, address;
     int16_t immediate;
 
-    string res;
-    instruction = instruction_memory_[addr_to_index(PC_)].to_ulong();
+    int32_t res = addr_to_index(PC_);
+    instruction = instruction_memory_[res].to_ulong();
     if (instruction == 0) {
-        return res;
+        return -1;
     }
-    res = assembly_[addr_to_index(PC_)];
     PC_ = PC_.to_ulong() + 4;
 
     opcode = instruction >> 26;
@@ -98,10 +97,6 @@ string Simulator::step() {
     return res;
 }
 
-void Simulator::set(uint8_t reg_num, int32_t num) {
-    registers_[reg_num] = num;
-}
-
 const vector<Word>& Simulator::registers() {
     return registers_;
 }
@@ -110,12 +105,9 @@ const vector<Word>& Simulator::data_memory() {
     return data_memory_;
 }
 
-const vector<string> Simulator::NUMBER_TO_REGISTER = {
-    "zero", "at",   "v0",   "v1",   "a0",   "a1",   "a2",   "a3",
-    "t0",   "t1",   "t2",   "t3",   "t4",   "t5",   "t6",   "t7",
-    "s0",   "s1",   "s2",   "s3",   "s4",   "s5",   "s6",   "s7",
-    "t8",   "t9",   "k0",   "k1",   "gp",   "sp",   "fp",   "ra"
-};
+const vector<string>& Simulator::assembly() {
+    return assembly_;
+}
 
 void Simulator::init(const vector<Word>& binary) {
     fill(registers_.begin(), registers_.end(), 0);
