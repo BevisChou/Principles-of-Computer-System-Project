@@ -12,38 +12,71 @@ void SimulatorInterface::serve(const vector<string>&& assembly) {
 
 void SimulatorInterface::serve() {
     initscr();
+    noecho();
+    keypad(stdscr, TRUE);
+    refresh();
+
+    WINDOW *mem_win, *regs_win, *asm_win;
+    mem_win = newwin(LINES, MEMORY_WINDOW_WIDTH, 0, 0);
+    regs_win = newwin(LINES, REGISTERS_WINDOW_WIDTH, 0, MEMORY_WINDOW_WIDTH + WINDOW_PADDING);
+    asm_win = newwin(LINES, COLS - MEMORY_WINDOW_WIDTH - REGISTERS_WINDOW_WIDTH, 0, MEMORY_WINDOW_WIDTH + REGISTERS_WINDOW_WIDTH + 2 * WINDOW_PADDING);
+    box(mem_win, 0, 0);
+    box(regs_win, 0, 0);
+    box(asm_win, 0, 0);
 
     char input;
     int32_t cur = -1;
     vector<string> assembly = simulator_.assembly();
+    const vector<Word>& memory = simulator_.data_memory();
+    const vector<Word>& registers = simulator_.registers();
+    const Word& PC = simulator_.PC();
 
-    // TODO: initial frame
-    printw("Hello world");
-    refresh();
+    const auto refresh_windows = [&]() {
+        // display memory
+        for (uint8_t i = 0; i < LINES && memory[i] != 0; i++) {
+            mvwprintw(mem_win, i, 0, "%02d:%#010x", i, memory[i]);
+        }
+        wrefresh(mem_win);
+
+        // display registers
+        for (uint8_t i = 0; i < NUM_REGISTERS / 2; i++) {
+            mvwprintw(regs_win, i, 0, "%02d:%#010x %02d:%#010x", 2 * i, registers[2 * i], 2 * i + 1, registers[2 * i + 1]);
+        }
+        mvwprintw(regs_win, NUM_REGISTERS / 2, 0, "pc:%#010x", PC);
+        wrefresh(regs_win);
+
+        // display assembly
+        for (uint8_t i = 0; i < assembly.size(); i++) {
+            mvwprintw(asm_win, i, 0, "%c\t%s", (i == cur ? '>' : ' '), assembly[i].c_str());
+        }
+        wrefresh(asm_win);
+    };
+
+    refresh_windows();
 
     do {
         input = getch();
         switch (input) {
             case 's':
                 cur = simulator_.step();
-
+                refresh_windows();
                 break;
             default:
                 break;
         }
     } while (input != 'q');
 
+    wborder(mem_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    wborder(regs_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    wborder(asm_win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    delwin(mem_win);
+    delwin(regs_win);
+    delwin(asm_win);
+
     endwin();
 }
 
 Simulator SimulatorInterface::simulator_ = Simulator();
-
-const vector<string> SimulatorInterface::NUMBER_TO_REGISTER = {
-    "zero", "at",   "v0",   "v1",   "a0",   "a1",   "a2",   "a3",
-    "t0",   "t1",   "t2",   "t3",   "t4",   "t5",   "t6",   "t7",
-    "s0",   "s1",   "s2",   "s3",   "s4",   "s5",   "s6",   "s7",
-    "t8",   "t9",   "k0",   "k1",   "gp",   "sp",   "fp",   "ra"
-};
 
 void Interface::serve() {
     string input;

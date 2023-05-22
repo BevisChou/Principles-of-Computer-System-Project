@@ -15,6 +15,7 @@ public:
     void load_assembly(vector<string>);
     int32_t step();
     const vector<Word>& registers();
+    const Word& PC();
     const vector<Word>& data_memory();
     const vector<string>& assembly();
 private:

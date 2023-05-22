@@ -23,7 +23,9 @@ public:
 private:
     static void serve();
     static Simulator simulator_;
-    static const vector<string> NUMBER_TO_REGISTER;
+    static const uint32_t MEMORY_WINDOW_WIDTH = 13;
+    static const uint32_t REGISTERS_WINDOW_WIDTH = 27;
+    static const uint32_t WINDOW_PADDING = 2;
 };
 
 class Interface {
