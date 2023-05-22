@@ -87,7 +87,7 @@ int32_t Simulator::step() {
             }
             break;
         case InstructionType::J:
-            address = instruction & 0x3ffffff;
+            address = (instruction & 0x3ffffff) << 2;
             if (opcode == 0b000011) {  // jal
                 registers_[static_cast<uint32_t>(Register::RA)] = PC_;
             }
@@ -111,6 +111,10 @@ const vector<Word>& Simulator::data_memory() {
 
 const vector<string>& Simulator::assembly() {
     return assembly_;
+}
+
+Word Simulator::index_to_mem_addr(uint32_t idx) {
+    return Word(STACK_TOP - idx * WORD_SIZE);
 }
 
 void Simulator::init(const vector<Word>& binary) {

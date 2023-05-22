@@ -18,9 +18,10 @@ public:
     const Word& PC();
     const vector<Word>& data_memory();
     const vector<string>& assembly();
+    static Word index_to_mem_addr(uint32_t);
 private:
     void init(const vector<Word>&);
-    uint32_t addr_to_index(Word);
+    static uint32_t addr_to_index(Word);
     static const unordered_map<uint32_t, InstructionType> OPCODE_TO_TYPE;
     static const uint32_t MAX_TEXT_SEGMENT_SIZE = 0x100000;
     static const uint32_t MAX_STACK_SIZE = 0x100000;
