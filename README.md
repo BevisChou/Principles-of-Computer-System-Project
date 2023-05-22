@@ -4,41 +4,50 @@
 
 ```bash
 # 安装依赖
-apt update
-apt install -y build-essential cmake libncurses5-dev
+sudo apt update
+sudo apt install -y build-essential cmake libncurses5-dev
 
-# 编译本项目
+# 进入项目根目录编译本项目
 ./build.sh
 ```
 
 ## 运行
 
 ```bash
+# 进入项目根目录运行本程序
 ./run.sh
 ```
 
-## 使用
-
-启动程序后，用户可以输入以下命令使用程序的功能。
-
-1. assemble `input_filename` `output_filename`
-2. disassemble `input_filename` `output_filename`
-3. simulate assembly `file_name`
-4. simulate binary `file_name`
-5. convert to int `bits`
-6. convert to float `bits`
-7. convert int `number`
-8. convert float `number`
-9. exit
-
-在模拟器模式下，用户可以输入以下指令。
-
-1. s
-2. t
+具体使用方法将在后文介绍。
 
 ## 功能
 
-支持的MIPS指令包括：
+### 程序功能
+
+- 汇编
+
+  输入存有汇编代码的绝对路径和期望输出的文件的绝对路径，程序将完成汇编并将结果存在指定的文件中。
+
+- 反汇编
+
+  输入存有二进制码的绝对路径和期望输出的文件的绝对路径，程序将完成反汇编并将结果存在指定的文件中。
+
+- MIPS模拟器
+
+  输入存有需要模拟执行的汇编代码或二进制码的文件的绝对路径，完成模拟，用户可以全程查看32个寄存器以及PC寄存器的状态以及内存的状态。
+
+- 数的表示和运算
+
+  具体功能包括：
+
+  - 将十进制整数转化为二进制补码
+  - 将十进制浮点数转化为符合IEEE标准的32位机器码
+  - 将二进制补码转化为十进制整数
+  - 将符合IEEE标准的32位浮点数表示转化为十进制浮点数
+
+### MIPS指令支持
+
+以上功能支持的MIPS指令共15个。这些指令涵盖了绝大部分常用指令，包括：
 
 - mv
 - lw
@@ -56,24 +65,56 @@ apt install -y build-essential cmake libncurses5-dev
 - jr
 - jal
 
-### 汇编
+## 使用方法
 
-输入汇编码文件名与输出文件名，将结果写入指定文件。默认文件名与输入汇编码合法。
+程序分常规模式和模拟器模式。启动程序后，程序将进入常规模式，常规模式下支持的命令如下所示。
 
-### 反汇编
+1. assemble `input_filename` `output_filename`
 
-输入机器码文件名与输出文件名，将结果写入指定文件，默认文件名与输入机器码合法。
+   完成汇编。
 
-### MIPS模拟器
+2. disassemble `input_filename` `output_filename`
 
-模拟的系统状态包括：
-- 32个寄存器
-- 内存
+   完成反汇编。
 
-### 数的表示和运算
+3. simulate assembly `file_name`
 
-功能包括：
-- 将十进制整数转化为二进制补码
-- 将十进制浮点数转化为符合IEEE标准的32位机器码
-- 将二进制补码转化为十进制整数
-- 将符合IEEE标准的32位浮点数表示转化为十进制浮点数
+   进入模拟器模式，模拟指定汇编码的执行。
+
+4. simulate binary `file_name`
+
+   进入模拟器模式，模拟指定二进制码的执行。
+
+5. convert to int `bits`
+
+   将32位二进制补码转化为十进制整数并输出。
+
+6. convert to float `bits`
+
+   将32位二进制码转化为十进制浮点数并输出。
+
+7. convert int `number`
+
+   将十进制整数转化为32位二进制补码。
+
+8. convert float `number`
+
+   将十进制浮点转化为32位二进制码。
+
+9. exit
+
+   退出程序。
+
+在模拟器模式下，用户可以输入以下命令。
+
+1. s
+
+   单步执行。
+
+2. t
+
+   退出模拟器模式。
+
+## 注意事项
+
+请确保输入的命令格式正确，并确保需要汇编的汇编码、需要反汇编的二进制码、需要模拟的汇编码或二进制码正确。
