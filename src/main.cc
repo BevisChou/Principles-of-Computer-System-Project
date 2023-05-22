@@ -1,7 +1,6 @@
 #include "interface/interface.hh"
 
 int main() {
-    Interface interface;
-    interface.serve();
+    Interface::serve();
     return 0;
 }

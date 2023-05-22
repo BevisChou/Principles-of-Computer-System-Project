@@ -1,39 +1,45 @@
 # Principles-of-Computer-System-Project
 
-## 目标
+## 编译
 
-- 提交物
-    - 技术报告
-        - 需求
-        - 设计
-        - 实现
-    - 源代码包
-    - 展示幻灯片
-- 其他
-    - 展示
-        - 幻灯片放映与讲解
-        - 程序演示
+```bash
+# 安装依赖
+apt update
+apt install -y build-essential cmake libncurses5-dev
 
-## 功能
+# 编译本项目
+./build.sh
+```
 
-支持的命令如下：
+## 运行
+
+```bash
+./run.sh
+```
+
+## 使用
+
+启动程序后，用户可以输入以下命令使用程序的功能。
 
 1. assemble `input_filename` `output_filename`
 2. disassemble `input_filename` `output_filename`
 3. simulate assembly `file_name`
 4. simulate binary `file_name`
-5. step
-6. set `register_number` `number`
-7. show registers
-8. show memory
-9. terminate
-10. convert to int `bits`
-11. convert to float `bits`
-12. convert int `number`
-13. convert float `number`
-14. exit
+5. convert to int `bits`
+6. convert to float `bits`
+7. convert int `number`
+8. convert float `number`
+9. exit
 
-支持的指令包括：
+在模拟器模式下，用户可以输入以下指令。
+
+1. s
+2. t
+
+## 功能
+
+支持的MIPS指令包括：
+
 - mv
 - lw
 - sw

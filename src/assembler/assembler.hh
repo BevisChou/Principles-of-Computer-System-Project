@@ -13,10 +13,11 @@ using namespace std;
 class Assembler {
 public:
     Assembler() = delete;
-    static vector<Word> assemble(const vector<string>&);
+    ~Assembler() = delete;
+    static vector<Word> assemble(const vector<string>&, bool = false);
     static vector<Word> assemble(const string&);
-private:
     static vector<string> preprocess(const vector<string>&);
+private:
     static inline uint32_t index_to_addr(uint32_t);
     static Register parse_register(const string&);
     static const unordered_map<string, uint32_t> INSTRUCTION_TO_OPCODE;
