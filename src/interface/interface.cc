@@ -33,16 +33,16 @@ void SimulatorInterface::serve() {
 
     const auto refresh_windows = [&]() {
         // display memory
-        for (uint8_t i = 0; i < LINES && memory[i] != 0; i++) {
-            mvwprintw(mem_win, i, 0, "%02d:%#010x", i, memory[i]);
+        for (uint8_t i = 0; i < LINES; i++) {
+            mvwprintw(mem_win, i, 0, "%#010lx:%#010lx", Simulator::index_to_mem_addr(i).to_ulong(), memory[i].to_ulong());
         }
         wrefresh(mem_win);
 
         // display registers
         for (uint8_t i = 0; i < NUM_REGISTERS / 2; i++) {
-            mvwprintw(regs_win, i, 0, "%02d:%#010x %02d:%#010x", 2 * i, registers[2 * i], 2 * i + 1, registers[2 * i + 1]);
+            mvwprintw(regs_win, i, 0, "%02d:%#010lx %02d:%#010lx", 2 * i, registers[2 * i].to_ulong(), 2 * i + 1, registers[2 * i + 1].to_ulong());
         }
-        mvwprintw(regs_win, NUM_REGISTERS / 2, 0, "pc:%#010x", PC);
+        mvwprintw(regs_win, NUM_REGISTERS / 2, 0, "PC:%#010lx", PC.to_ulong());
         wrefresh(regs_win);
 
         // display assembly
